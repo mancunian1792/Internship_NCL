@@ -1,0 +1,11 @@
+function [xhat_k_plus_1,phat_k_plus_1,K_k_plus_1]=kalmann(xhat_k,phat_k,u_k,y_k_plus_1,Q,R,model)
+A=model.Ad;
+B=model.Bd;
+C=model.Cd;
+xhat_k_plus_1_given_k=A*xhat_k+B*u_k;
+phat_k_plus_1_given_k=A*phat_k*A'+Q;
+%K_k_plus_1=phat_k_plus_1_given_k*C'*inv(C*phat_k_plus_1_given_k*C'+R);
+K_k_plus_1=phat_k_plus_1_given_k*C'/(C*phat_k_plus_1_given_k*C'+R);
+xhat_k_plus_1=xhat_k_plus_1_given_k+K_k_plus_1*(y_k_plus_1-C*xhat_k_plus_1_given_k);
+I=eye(size(phat_k));
+phat_k_plus_1=(I-K_k_plus_1*C)*phat_k_plus_1_given_k*(I-K_k_plus_1*C)'+K_k_plus_1*R*K_k_plus_1';
